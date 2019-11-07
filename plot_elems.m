@@ -1,4 +1,4 @@
-function sub_elems = plot_elems(elems, filters, groups)
+function h = plot_elems(elems, filters, groups)
   
  %  hits = arrayfun(@(x) x.DAY == day ,elems);
  % elems_day = elems(hits);
@@ -12,7 +12,7 @@ function sub_elems = plot_elems(elems, filters, groups)
   
   [sub_elems, legs] = group_elems(filtered_elems, groups);
   
-  figure
+  h = figure
   hold on
   
   %cellfun(@(e) plot([e(:).TIME_ELAPSED], [e(:).ENERGY_CONSUMED], '*'), sub_elems);
@@ -28,7 +28,7 @@ function sub_elems = plot_elems(elems, filters, groups)
 endfunction
 
 function plot_linear_regression(elems)
-    group_linear_regression = {"USER","LANGUAGE","DAY"};
+    group_linear_regression = {"USER","LANGUAGE"};
     sub_elems = group_elems(elems, group_linear_regression);
     
     t = cellfun(@(e) [mean([e.TIME_ELAPSED])], sub_elems);
@@ -40,33 +40,7 @@ function plot_linear_regression(elems)
     
 endfunction
 
-function [sub_elems, legends] = group_elems(elems, groups)
-    legends = {};
-    sub_elems = [];
-    number_legends = 1;
-    for i=1:length(elems)
-      legend_elem = get_legend_name(elems(i), groups);
-      if ~any(strcmp(legends, legend_elem))
-        legends{number_legends} = legend_elem;
-        number_legends = number_legends + 1;
-      endif
-      
-    endfor
-    
-    for i=1:number_legends-1
-      legend_elem = legends{i};
-      idx = arrayfun(@(e) strcmp(get_legend_name(e, groups), legend_elem), elems);
-      sub_elems{i} = elems(idx);
-    endfor
-end
 
-function legend_name = get_legend_name(elem, groups)
-  legend_name = "";
-  for i=1:length(groups)-1
-    legend_name = [legend_name, num2str(elem.(groups{i})), "--"];
-  end
-  legend_name = [legend_name, num2str(elem.(groups{end}))];
-endfunction
 
 function res = is_filtered(elem, filters)
   res = 1;
@@ -81,6 +55,6 @@ function plot_elem(x)
   err_e = std([x(:).ENERGY_CONSUMED]);
   err_t = std([x(:).TIME_ELAPSED]);
   
-  plot(t,e, "+");
-  #errorbar(t, e, err_e, "~.r");
+  plot(t,e, "+", "markersize", 20);
+  errorbar(t, e, err_e, "~.r");
 endfunction

@@ -1,5 +1,6 @@
 #!/bin/bash
 SOURCE_DIR="$(dirname "$BASH_SOURCE")"
+(return 0 2>/dev/null) && sourced=1 || sourced=0
 
 measure_energy()
 {
@@ -37,6 +38,9 @@ measure_energy()
     tail -n 3 $raw_test > $raw_test
     time_elapsed=$(awk '{if (NR==1) print $1}' $raw_test)
   
+    # translate Pkg_J to ENERGY_CONSUMED
+    sed -i 's/Pkg_J/ENERGY_CONSUMED/g' $raw_test
+
   else
     ## MEASURE ENERGY USING POWERTOP
     { sudo turbostat -S --quiet $SOURCE_DIR/measure_powertop.sh $SOURCE_DIR/report.csv $cmd ; } 2> $raw_test
@@ -52,7 +56,6 @@ measure_energy()
     time_elapsed=${array_results[0]}
     energy_consumed=${array_results[1]}
     cpu_energy_consumed=${array_results[2]}
-
   fi
 
   raw_keys="$raw_keys""ENERGY_CONSUMED\tCPU_ENERGY_CONSUMED\t"
@@ -63,6 +66,7 @@ measure_energy()
   tail -n 3 $raw_test > tmp.txt
   mv tmp.txt $raw_test
 
+  
   if [[ ! -e $output_filename ]]; then
         echo "file not exists"
         awk -v keys="$raw_keys" '{if (NR==2) print keys "TIME_ELAPSED\t" $0}' $raw_test > $output_filename
@@ -79,3 +83,7 @@ measure_energy()
 
 export -f measure_energy
 
+## if executed as main
+if [[ $sourced -eq 0 ]] ; then
+  echo "this is a main"
+fi

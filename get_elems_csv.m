@@ -14,7 +14,7 @@ function [elems, h] = get_elems_csv(csv_file)
     
     if length(h) == length(data)
       for i=1:length(h)
-        if strcmp(h{i}, "USER") || strcmp(h{i}, "LANGUAGE")
+        if strcmp(h{i}, "USER") || strcmp(h{i}, "LANGUAGE") || strcmp(h{i}, "PROGRAM")
           elems(current_index).(h{i}) = data{i};  
         else
           elems(current_index).(h{i}) = str2double(data{i});
