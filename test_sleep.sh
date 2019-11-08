@@ -5,17 +5,16 @@ output_filename=`pwd`"/sleep_test_all_5.csv"
 
 source measure_energy.sh
 
-number_loops=20
+number_loops=2
 sleep_times=(1 2 3 5 10)
-for i in {1..20}; do
+for (( number_loop=0; number_loop<${number_loops}; number_loop++ )); do
   for s in "${sleep_times[@]}"; do
-    echo "$i -> $s"
-    sleep_time=$s
-    cmd="sleep $sleep_time"
-    keys=("SLEEP_TIME")
-    values=("$sleep_time")
+    echo "$number_loop -> $s"
+    SLEEP_TIME=$s
+    cmd="sleep $SLEEP_TIME"
+    keys="SLEEP_TIME"
     sleep 5
-    measure_energy "$output_filename" "$cmd" $keys $values
+    measure_energy 0 "$output_filename" "$cmd" $keys 
   done
 done
 
